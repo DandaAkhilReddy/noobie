@@ -1,5 +1,7 @@
-from app import db
+from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, date
+
+db = SQLAlchemy()
 
 class Food(db.Model):
     id = db.Column(db.Integer, primary_key=True)

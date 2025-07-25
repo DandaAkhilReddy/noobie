@@ -1,5 +1,4 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify, flash
-from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, date
 import os
 from dotenv import load_dotenv
@@ -11,9 +10,9 @@ app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-secret-key')
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///gym_tracker.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-db = SQLAlchemy(app)
+from models import db, Food, WeightLog, DailyLog, FoodEntry
 
-from models import Food, WeightLog, DailyLog, FoodEntry
+db.init_app(app)
 
 @app.route('/')
 def index():
@@ -149,4 +148,4 @@ def set_protein_target():
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
