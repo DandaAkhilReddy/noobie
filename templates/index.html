@@ -28,8 +28,8 @@
                 <div class="mt-3">
                     <div class="progress">
                         <div class="progress-bar {% if daily_log.total_protein >= daily_log.protein_target %}bg-success{% else %}bg-warning{% endif %}" 
-                             style="width: {{ min(100, (daily_log.total_protein / daily_log.protein_target) * 100) }}%">
-                            {{ "%.0f"|format((daily_log.total_protein / daily_log.protein_target) * 100) }}%
+                             style="width: {% if daily_log.protein_target > 0 %}{{ [100, ((daily_log.total_protein / daily_log.protein_target) * 100)]|min }}{% else %}0{% endif %}%">
+                            {% if daily_log.protein_target > 0 %}{{ "%.0f"|format((daily_log.total_protein / daily_log.protein_target) * 100) }}{% else %}0{% endif %}%
                         </div>
                     </div>
                 </div>
