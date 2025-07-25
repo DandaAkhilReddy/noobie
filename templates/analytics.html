@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+
+{% block title %}Analytics - Gym Progress Tracker{% endblock %}
+
+{% block content %}
+<h2><i class="fas fa-chart-line"></i> Analytics Dashboard</h2>
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">Today's Calories</h5>
+                <h3 class="text-primary">{{ "%.0f"|format(daily_log.total_calories if daily_log else 0) }}</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">Today's Protein</h5>
+                <h3 class="{% if protein_achieved %}text-success{% else %}text-warning{% endif %}">
+                    {{ "%.1f"|format(daily_log.total_protein if daily_log else 0) }}g
+                </h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">Protein Target</h5>
+                <h3 class="text-info">{{ daily_log.protein_target if daily_log else 150 }}g</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">Target Achievement</h5>
+                <h3 class="{% if protein_achieved %}text-success{% else %}text-danger{% endif %}">
+                    {{ protein_percentage }}%
+                </h3>
+                {% if protein_achieved %}
+                    <i class="fas fa-check-circle text-success"></i>
+                {% else %}
+                    <i class="fas fa-times-circle text-danger"></i>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h6><i class="fas fa-chart-bar"></i> 7-Day Calorie Trend</h6>
+            </div>
+            <div class="card-body">
+                <div id="calorieChart"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h6><i class="fas fa-chart-line"></i> 7-Day Protein Trend</h6>
+            </div>
+            <div class="card-body">
+                <div id="proteinChart"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h6><i class="fas fa-weight"></i> Weight Progress</h6>
+            </div>
+            <div class="card-body">
+                <div id="weightChart"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h6><i class="fas fa-bullseye"></i> Weekly Summary</h6>
+            </div>
+            <div class="card-body">
+                {% if daily_logs %}
+                <ul class="list-group list-group-flush">
+                    {% for log in daily_logs[-7:] %}
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>{{ log.date.strftime('%b %d') }}</span>
+                        <div>
+                            <span class="badge bg-primary me-1">{{ "%.0f"|format(log.total_calories) }} cal</span>
+                            <span class="badge {% if log.total_protein >= log.protein_target %}bg-success{% else %}bg-warning{% endif %}">
+                                {{ "%.1f"|format(log.total_protein) }}g protein
+                            </span>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="text-muted text-center">No data available yet. Start logging your food!</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Prepare data for charts
+    const dates = [{% for log in daily_logs %}'{{ log.date.strftime("%b %d") }}'{{ "," if not loop.last }}{% endfor %}];
+    const calories = [{% for log in daily_logs %}{{ log.total_calories }}{{ "," if not loop.last }}{% endfor %}];
+    const proteins = [{% for log in daily_logs %}{{ log.total_protein }}{{ "," if not loop.last }}{% endfor %}];
+    const targets = [{% for log in daily_logs %}{{ log.protein_target }}{{ "," if not loop.last }}{% endfor %}];
+    
+    const weights = [{% for log in weight_logs %}{{ log.weight }}{{ "," if not loop.last }}{% endfor %}];
+    const weightDates = [{% for log in weight_logs %}'{{ log.date.strftime("%b %d") }}'{{ "," if not loop.last }}{% endfor %}];
+
+    // Calorie Chart
+    Plotly.newPlot('calorieChart', [{
+        x: dates,
+        y: calories,
+        type: 'bar',
+        marker: {color: '#0d6efd'}
+    }], {
+        margin: {t: 20, r: 20, b: 40, l: 40},
+        height: 300,
+        showlegend: false,
+        xaxis: {title: 'Date'},
+        yaxis: {title: 'Calories'}
+    }, {displayModeBar: false});
+
+    // Protein Chart
+    Plotly.newPlot('proteinChart', [{
+        x: dates,
+        y: proteins,
+        type: 'scatter',
+        mode: 'lines+markers',
+        name: 'Protein Intake',
+        line: {color: '#198754'}
+    }, {
+        x: dates,
+        y: targets,
+        type: 'scatter',
+        mode: 'lines',
+        name: 'Target',
+        line: {color: '#ffc107', dash: 'dash'}
+    }], {
+        margin: {t: 20, r: 20, b: 40, l: 40},
+        height: 300,
+        xaxis: {title: 'Date'},
+        yaxis: {title: 'Protein (g)'}
+    }, {displayModeBar: false});
+
+    // Weight Chart
+    if (weights.length > 0) {
+        Plotly.newPlot('weightChart', [{
+            x: weightDates,
+            y: weights,
+            type: 'scatter',
+            mode: 'lines+markers',
+            line: {color: '#dc3545'}
+        }], {
+            margin: {t: 20, r: 20, b: 40, l: 40},
+            height: 300,
+            showlegend: false,
+            xaxis: {title: 'Date'},
+            yaxis: {title: 'Weight (kg)'}
+        }, {displayModeBar: false});
+    } else {
+        document.getElementById('weightChart').innerHTML = '<p class="text-muted text-center mt-4">No weight data available</p>';
+    }
+</script>
+{% endblock %}

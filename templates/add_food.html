@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Add Food - Gym Progress Tracker{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5><i class="fas fa-plus-circle"></i> Add New Food</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Food Name</label>
+                        <input type="text" class="form-control" id="name" name="name" 
+                               placeholder="e.g., Chicken Breast" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="calories" class="form-label">Calories per 100g</label>
+                        <input type="number" step="0.1" class="form-control" id="calories" name="calories" 
+                               placeholder="e.g., 165" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="protein" class="form-label">Protein per 100g (grams)</label>
+                        <input type="number" step="0.1" class="form-control" id="protein" name="protein" 
+                               placeholder="e.g., 31" required>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-save"></i> Add Food
+                        </button>
+                        <a href="{{ url_for('index') }}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Back to Dashboard
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div class="mt-4">
+            <div class="alert alert-info">
+                <h6><i class="fas fa-info-circle"></i> Common Foods Reference:</h6>
+                <small>
+                    <strong>Chicken Breast:</strong> 165 cal, 31g protein<br>
+                    <strong>Rice (cooked):</strong> 130 cal, 2.7g protein<br>
+                    <strong>Eggs:</strong> 155 cal, 13g protein<br>
+                    <strong>Oats:</strong> 389 cal, 16.9g protein<br>
+                    <strong>Greek Yogurt:</strong> 59 cal, 10g protein
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

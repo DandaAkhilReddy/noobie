@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white">
+                <h5><i class="fas fa-calendar-day"></i> Today's Summary</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-6">
+                        <h6>Calories</h6>
+                        <h3 class="text-primary">{{ "%.0f"|format(daily_log.total_calories) }}</h3>
+                    </div>
+                    <div class="col-6">
+                        <h6>Protein</h6>
+                        <h3 class="{% if daily_log.total_protein >= daily_log.protein_target %}text-success{% else %}text-warning{% endif %}">
+                            {{ "%.1f"|format(daily_log.total_protein) }}g
+                        </h3>
+                        <small>Target: {{ daily_log.protein_target }}g</small>
+                        {% if daily_log.total_protein >= daily_log.protein_target %}
+                            <i class="fas fa-check-circle text-success"></i>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="mt-3">
+                    <div class="progress">
+                        <div class="progress-bar {% if daily_log.total_protein >= daily_log.protein_target %}bg-success{% else %}bg-warning{% endif %}" 
+                             style="width: {{ min(100, (daily_log.total_protein / daily_log.protein_target) * 100) }}%">
+                            {{ "%.0f"|format((daily_log.total_protein / daily_log.protein_target) * 100) }}%
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header bg-info text-white">
+                <h5><i class="fas fa-weight"></i> Weight Log</h5>
+            </div>
+            <div class="card-body">
+                {% if weight_log %}
+                    <h4>{{ weight_log.weight }} kg</h4>
+                    <small class="text-muted">Logged today</small>
+                {% else %}
+                    <p class="text-muted">No weight logged today</p>
+                {% endif %}
+                
+                <form method="POST" action="{{ url_for('log_weight') }}" class="mt-3">
+                    <div class="input-group">
+                        <input type="number" step="0.1" name="weight" class="form-control" 
+                               placeholder="Weight (kg)" {% if weight_log %}value="{{ weight_log.weight }}"{% endif %} required>
+                        <button class="btn btn-info" type="submit">
+                            <i class="fas fa-save"></i> Log Weight
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header bg-warning text-dark">
+                <h5><i class="fas fa-target"></i> Protein Target</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('set_protein_target') }}">
+                    <div class="input-group">
+                        <input type="number" step="0.1" name="target" class="form-control" 
+                               value="{{ daily_log.protein_target }}" required>
+                        <span class="input-group-text">g</span>
+                        <button class="btn btn-warning" type="submit">
+                            <i class="fas fa-save"></i> Update
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5><i class="fas fa-utensils"></i> Log Food</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('log_food') }}">
+                    <div class="mb-3">
+                        <select name="food_id" class="form-select" required>
+                            <option value="">Select a food...</option>
+                            {% for food in all_foods %}
+                                <option value="{{ food.id }}">{{ food.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <small class="text-muted">Don't see your food? <a href="{{ url_for('add_food') }}">Add it here</a></small>
+                    </div>
+                    <div class="mb-3">
+                        <input type="number" step="0.1" name="quantity" class="form-control" 
+                               placeholder="Quantity (grams)" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-plus"></i> Log Food
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        {% if recent_foods %}
+        <div class="card mt-4">
+            <div class="card-header bg-secondary text-white">
+                <h6><i class="fas fa-list"></i> Today's Food Log</h6>
+            </div>
+            <div class="card-body">
+                {% for entry in recent_foods %}
+                <div class="d-flex justify-content-between align-items-center mb-2 p-2 bg-light rounded">
+                    <div>
+                        <strong>{{ entry.food.name }}</strong><br>
+                        <small>{{ entry.quantity_grams }}g</small>
+                    </div>
+                    <div class="text-end">
+                        <span class="badge bg-primary">{{ "%.0f"|format(entry.calories) }} cal</span>
+                        <span class="badge bg-success">{{ "%.1f"|format(entry.protein) }}g protein</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
