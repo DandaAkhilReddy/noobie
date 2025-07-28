@@ -1,0 +1,7 @@
+# NOOBIE AI - Azure Functions Requirements
+azure-functions>=1.18.0
+azure-functions-worker>=1.2.0
+
+# Core dependencies
+requests>=2.31.0
+python-dateutil>=2.9.0
