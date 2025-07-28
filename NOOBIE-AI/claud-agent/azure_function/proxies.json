@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json.schemastore.org/proxies",
+  "proxies": {
+    "root": {
+      "matchCondition": {
+        "route": "/"
+      },
+      "responseOverrides": {
+        "response.statusCode": "200",
+        "response.headers.Content-Type": "application/json",
+        "response.body": "{\n  \"name\": \"NOOBIE AI Blog Generator\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Automated daily blog generation using AI\",\n  \"author\": \"NOOBIE AI Team\",\n  \"endpoints\": {\n    \"health\": \"/api/health\",\n    \"status\": \"/api/status\",\n    \"manual_generate\": \"/api/manual_generate\"\n  },\n  \"schedule\": \"Daily at 8:00 AM UTC\",\n  \"repository\": \"https://github.com/akhilreddydanda/NOOBIE\",\n  \"documentation\": \"https://github.com/akhilreddydanda/NOOBIE/blob/main/README.md\"\n}"
+      }
+    }
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "python",
+    "FUNCTIONS_EXTENSION_VERSION": "~4",
+    "PYTHON_ISOLATE_WORKER_DEPENDENCIES": "1",
+    "SCM_DO_BUILD_DURING_DEPLOYMENT": "true",
+    
+    "_COMMENT_API_KEYS": "Add your API keys below for local development",
+    "NEWS_API_KEY": "",
+    "CLAUDE_API_KEY": "",
+    "OPENAI_API_KEY": "",
+    "GITHUB_TOKEN": "",
+    
+    "_COMMENT_CONFIG": "Blog configuration",
+    "BLOG_TITLE": "NOOBIE AI - Daily News Intelligence",
+    "AUTHOR_NAME": "NOOBIE AI",
+    "GITHUB_REPO": "akhilreddydanda/NOOBIE",
+    "GITHUB_BRANCH": "main",
+    
+    "_COMMENT_FEATURES": "Feature flags",
+    "MAX_ARTICLES": "8",
+    "LOG_LEVEL": "INFO",
+    "UPLOAD_TO_GITHUB": "true",
+    "MOCK_MODE": "false",
+    "RETRY_ATTEMPTS": "3"
+  },
+  "Host": {
+    "LocalHttpPort": 7071,
+    "CORS": "*",
+    "CORSCredentials": false
+  }
+}
